@@ -1,15 +1,11 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!, only: [:index, :new, :create]
-  before_action :set_item, only: [:index, :sold_out]
+  before_action :set_item, only: [:index, :create, :sold_out]
   before_action :move_to_root_path, only: [:index, :new, :create]
   before_action :sold_out, only: [:index]
   def index
     gon.public_key = ENV['PAYJP_PUBLIC_KEY']
     @order_address = Order.new
-  end
-
-  def new
-    @order_address = OrderAddress.new
   end
 
   def create
@@ -46,7 +42,6 @@ class OrdersController < ApplicationController
   end
 
   def move_to_root_path
-    @item = Item.find(params[:item_id])
     return unless @item.user_id == current_user.id
 
     redirect_to root_path
